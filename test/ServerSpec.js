@@ -227,7 +227,7 @@ describe('', function() {
 
   }); // 'Link creation'
 
-  describe('Privileged Access:', function() {
+  xdescribe('Privileged Access:', function() {
 
     it('Redirects to login page if a user tries to access the main page and is not signed in', function(done) {
       request('http://127.0.0.1:4568/', function(error, res, body) {
@@ -252,7 +252,7 @@ describe('', function() {
 
   }); // 'Priviledged Access'
 
-  xdescribe('Account Creation:', function() {
+  describe('Account Creation:', function() {
 
     it('Signup creates a user record', function(done) {
       var options = {
@@ -271,6 +271,7 @@ describe('', function() {
             if (res[0] && res[0]['username']) {
               var user = res[0]['username'];
             }
+            console.log('user in test= ', user);
             expect(user).to.equal('Svnh');
             done();
           }).catch(function(err) {
@@ -300,7 +301,7 @@ describe('', function() {
 
   }); // 'Account Creation'
 
-  xdescribe('Account Login:', function() {
+  describe('Account Login:', function() {
 
     var requestWithSession = request.defaults({jar: true});
 
