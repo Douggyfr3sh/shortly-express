@@ -2,7 +2,7 @@ var express = require('express');
 var util = require('./lib/utility');
 var partials = require('express-partials');
 var bodyParser = require('body-parser');
-
+//external verifiers.
 
 var db = require('./app/config');
 var Users = require('./app/collections/users');
@@ -10,6 +10,8 @@ var User = require('./app/models/user');
 var Links = require('./app/collections/links');
 var Link = require('./app/models/link');
 var Click = require('./app/models/click');
+
+
 
 var app = express();
 
@@ -23,24 +25,36 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 
 
-app.get('/', 
+
+var authenticated = function (req,res, next) {
+  var hardcode = true;//hardcoded to true for now waiting on auth.
+  if (hardcode) {//check if req is not authenticated...
+    res.redirect('/login');
+  } else {
+    next();
+  }
+};
+
+
+
+app.get('/', authenticated,
 function(req, res) {
   res.render('index');
 });
 
-app.get('/create', 
+app.get('/create', authenticated,
 function(req, res) {
   res.render('index');
 });
 
-app.get('/links', 
+app.get('/links',
 function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.status(200).send(links.models);
   });
 });
 
-app.post('/links', 
+app.post('/links',
 function(req, res) {
   var uri = req.body.url;
 
@@ -76,7 +90,10 @@ function(req, res) {
 // Write your authentication routes here
 /************************************************************/
 
-
+app.get('/login',
+function(req, res) {
+  res.render('login');
+});
 
 /************************************************************/
 // Handle the wildcard route last - if all other routes fail
