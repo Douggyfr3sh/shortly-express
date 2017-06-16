@@ -32,7 +32,6 @@ app.use(session({
 
 app.get('/', util.checkUser,
 function(req, res) {
-  console.log('in get root, req.session= ', req.session);
   res.render('index');
 });
 
@@ -126,7 +125,6 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-  console.log('got to logout endpoint.');
   req.session.destroy(() => {
     res.redirect('/login');
   });

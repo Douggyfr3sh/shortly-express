@@ -308,7 +308,7 @@ describe('', function() {
     beforeEach(function(done) {
       new User({
         'username': 'Phillip',
-        'password': '$2a$10$aR3cBBB.aBiDZvSKp7lpU.07GoXvn2L4NcVkmVPh4gut74N10YQlq'
+        'password': 'Phillip'
       }).save().then(function() {
         done();
       });
@@ -320,7 +320,7 @@ describe('', function() {
         'uri': 'http://127.0.0.1:4568/login',
         'json': {
           'username': 'Phillip',
-          'password': 'Lyford'
+          'password': 'Phillip'
         }
       };
 
