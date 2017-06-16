@@ -340,6 +340,64 @@ describe('', function() {
         }
       };
 
+
+
+      requestWithSession(options, function(error, res, body) {
+        expect(res.headers.location).to.equal('/login');
+        done();
+      });
+    });
+
+    //NEW Added tests
+
+    it('Passwords are case sensitive', function(done) {
+      var options = {
+        'method': 'POST',
+        'uri': 'http://127.0.0.1:4568/login',
+        'json': {
+          'username': 'Phillip',
+          'password': 'phillip'
+        }
+      };
+
+
+
+      requestWithSession(options, function(error, res, body) {
+        expect(res.headers.location).to.equal('/login');
+        done();
+      });
+    });
+
+    it('User Names are case sensitive', function(done) {
+      var options = {
+        'method': 'POST',
+        'uri': 'http://127.0.0.1:4568/login',
+        'json': {
+          'username': 'PhilliP',
+          'password': 'Phillip'
+        }
+      };
+
+
+
+      requestWithSession(options, function(error, res, body) {
+        expect(res.headers.location).to.equal('/login');
+        done();
+      });
+    });
+
+    it('Attempting to log in with the correct password\'s hash does not work', function(done) {
+      var options = {
+        'method': 'POST',
+        'uri': 'http://127.0.0.1:4568/login',
+        'json': {
+          'username': 'Phillip',
+          'password': '$2a$10$tz2u5GjhPNigybkPPIXvL.4WbnNhGl2yj6PfOUvUol9zeK8psDDU2'
+        }
+      };
+
+
+
       requestWithSession(options, function(error, res, body) {
         expect(res.headers.location).to.equal('/login');
         done();

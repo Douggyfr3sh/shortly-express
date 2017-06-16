@@ -108,19 +108,6 @@ app.post('/login', (req, res) => {
         res.redirect('/login');
       }
     });
-
-
-    // bcrypt.compare(password, user.get('password'), (err, match) => {
-
-    //   if (match) {
-    //     util.createSession(req, res, user);
-
-    //   } else {
-    //     console.log('error checking password');
-    //     res.redirect('/login');
-    //   }
-    // });
-
   });
 });
 
