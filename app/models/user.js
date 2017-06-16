@@ -12,7 +12,7 @@ var User = db.Model.extend({
   },
 
   comparePassword: function(attempt, cb) {
-    bcrypt.compare(attemptedPassword, this.get('password'), (err, isMatch) => {
+    bcrypt.compare(attempt, this.get('password'), (err, isMatch) => {
       cb(isMatch);
     });
   },
@@ -25,7 +25,6 @@ var User = db.Model.extend({
         this.set('password', hash);
       });
   }
-
 });
 
 module.exports = User;

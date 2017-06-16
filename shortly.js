@@ -2,7 +2,6 @@ var express = require('express');
 var util = require('./lib/utility');
 var partials = require('express-partials');
 var bodyParser = require('body-parser');
-var bcrypt = require('bcrypt-nodejs');
 //external verifiers.
 
 var db = require('./app/config');
@@ -30,22 +29,6 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
-
-
-
-
-
-
-// var authenticated = function (req,res, next) {
-//   var hardcode = true;//hardcoded to true for now waiting on auth.
-//   if (hardcode) {//check if req is not authenticated...
-//     res.redirect('/login');
-//   } else {
-//     next();
-//   }
-// };
-
-
 
 app.get('/', util.checkUser,
 function(req, res) {
@@ -118,29 +101,26 @@ app.post('/login', (req, res) => {
     if (!user) {
       return res.redirect('/login');
     }
-    //if user exists, compare password
-    console.log('in login post: password =', password, 'user.getpassword: ', user.get('password'));
 
-    // if (password === user.get('password')) {
-    //   util.createSession(req, res, username);
-    // } else {
-    //   console.log('error checking password');
-    //   res.redirect('/login');
-    // }
-
-
-    bcrypt.compare(password, user.get('password'), (err, match) => {
-
-      if (match) {
+    user.comparePassword(password, (isMatch) => {
+      if (isMatch) {
         util.createSession(req, res, user);
-
       } else {
-        console.log('error checking password');
         res.redirect('/login');
       }
     });
 
-   // res.redirect('/');
+
+    // bcrypt.compare(password, user.get('password'), (err, match) => {
+
+    //   if (match) {
+    //     util.createSession(req, res, user);
+
+    //   } else {
+    //     console.log('error checking password');
+    //     res.redirect('/login');
+    //   }
+    // });
 
   });
 });
@@ -165,14 +145,25 @@ app.post('/signup', (req, res) => {
     .fetch()
     .then((user) => {
       if (!user) {
-        bcrypt.hash(password, null, null, (err, hash) => {
-          Users.create({
-            username: username,
-            password: hash
-          }).then((user) => {
-            util.createSession(req, res, user);
-          });
+
+        var newUser = new User ({
+          username: username,
+          password: password
         });
+
+        newUser.save().then( (savedUser) => {
+          util.createSession(req, res, savedUser);
+        });
+
+
+        // bcrypt.hash(password, null, null, (err, hash) => {
+        //   Users.create({
+        //     username: username,
+        //     password: hash
+        //   }).then((user) => {
+        //     util.createSession(req, res, user);
+        //   });
+        // });
       } else {
         console.log('Account exists!');
         res.redirect('/signup');
