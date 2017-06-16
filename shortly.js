@@ -49,6 +49,7 @@ app.use(session({
 
 app.get('/', util.checkUser,
 function(req, res) {
+  console.log('in get root, req.session= ', req.session);
   res.render('index');
 });
 
@@ -107,7 +108,7 @@ function(req, res) {
 });
 
 
-app.post('/login', (req,res) => {
+app.post('/login', (req, res) => {
   var username = req.body.username;
   var password = req.body.password;
 
@@ -118,35 +119,45 @@ app.post('/login', (req,res) => {
       return res.redirect('/login');
     }
     //if user exists, compare password
-    console.log('in login post: password =', password , 'user.getpassword: ', user.get('password'));
+    console.log('in login post: password =', password, 'user.getpassword: ', user.get('password'));
 
-    if(password === user.get('password')) {
-      util.createSession(req,res,username);
-    } else {
-      console.log('error checking password');
-      res.redirect('/login');
-    }
+    // if (password === user.get('password')) {
+    //   util.createSession(req, res, username);
+    // } else {
+    //   console.log('error checking password');
+    //   res.redirect('/login');
+    // }
 
 
-    // bcrypt.compare(password, user.get('password'), (err, match) => {
+    bcrypt.compare(password, user.get('password'), (err, match) => {
 
-    //   if (match) {
-    //     util.createSession();
-    //   } else {
-    //     console.log('error checking password');
-    //     res.redirect('/login');
-    //   }
-    // });
+      if (match) {
+        util.createSession(req, res, user);
+
+      } else {
+        console.log('error checking password');
+        res.redirect('/login');
+      }
+    });
+
+   // res.redirect('/');
 
   });
 });
 
-// app.get('/signup', (req,res) => {
+app.get('/logout', (req, res) => {
+  console.log('got to logout endpoint.');
+  req.session.destroy(() => {
+    res.redirect('/login');
+  });
+});
 
-// });
+app.get('/signup', (req,res) => {
+  res.render('signup');
+});
 
-//handle new user signup- not sure here!!
-app.post('/signup', (req,res) => {
+//handle new user signup
+app.post('/signup', (req, res) => {
   var username = req.body.username;
   var password = req.body.password;
 
