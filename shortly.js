@@ -57,7 +57,7 @@ function(req, res) {
   res.render('index');
 });
 
-app.get('/links',
+app.get('/links', util.checkUser,
 function(req, res) {
   Links.reset().fetch().then(function(links) {
     res.status(200).send(links.models);
@@ -118,13 +118,25 @@ app.post('/login', (req,res) => {
       return res.redirect('/login');
     }
     //if user exists, compare password
-    bcrypt.compare(password, user.get('password'), (err, success) => {
-      if (success) {
-        util.createSession();
-      } else {
-        res.redirect('/login');
-      }
-    });
+    console.log('in login post: password =', password , 'user.getpassword: ', user.get('password'));
+
+    if(password === user.get('password')) {
+      util.createSession(req,res,username);
+    } else {
+      console.log('error checking password');
+      res.redirect('/login');
+    }
+
+
+    // bcrypt.compare(password, user.get('password'), (err, match) => {
+
+    //   if (match) {
+    //     util.createSession();
+    //   } else {
+    //     console.log('error checking password');
+    //     res.redirect('/login');
+    //   }
+    // });
 
   });
 });
